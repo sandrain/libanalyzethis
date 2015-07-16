@@ -12,6 +12,11 @@
  *
  */
 
+#ifndef LIBANALYZETHIS_HOST_H
+#define LIBANALYZETHIS_HOST_H
+
 typedef void* libanalyzethis_host_t;
 
 typedef void* libanalyzethis_host_sched_t;
+
+#endif /* LIBANALYZETHIS_HOST_H */

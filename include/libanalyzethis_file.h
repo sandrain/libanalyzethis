@@ -12,4 +12,9 @@
  *
  */
 
+#ifndef LIBANALYZETHIS_FILE_H
+#define LIBANALYZETHIS_FILE_H
+
 typedef void* libanalyzethis_file_t;
+
+#endif /* LIBANALYZETHIS_FILE_H */

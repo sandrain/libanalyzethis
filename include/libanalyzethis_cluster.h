@@ -12,4 +12,9 @@
  *
  */
 
+#ifndef LIBANALYZETHIS_CLUSTER_H
+#define LIBANALYZETHIS_CLUSTER_H
+
 typedef void* libanalyzethis_cluster_t;
+
+#endif /* LIBANALYZETHIS_CLUSTER_H */

@@ -12,6 +12,11 @@
  *
  */
 
+#ifndef LIBANALYZETHIS_DEV_H
+#define LIBANALYZETHIS_DEV_H
+
 typedef void* libanalyzethis_device_t;
 
 typedef void* libanalyzethis_device_sched_t;
+
+#endif /* LIBANALYZETHIS_DEV_H */

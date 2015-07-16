@@ -67,11 +67,16 @@ typedef int
     (libanalyzethis_device_sched_t **dev_sched);
 
 /**
- * Schedule a task using a given device-level scheduler.
+ * Schedule a task using a given device-level scheduler. The scheduler will
+ * identify the target core for the execution of the task; it will not
+ * actually schedule the task for execution on the core, the caller is in
+ * charge of actually assigning the task to the core.
  *
  * @param[in]   dev_sched   Structure representing the device-level scheduler to
  *                          use for scheduling the task.
  * @param[in]   task        Structure representing the task to be scheduler.
+ * @param[out]  core        Core selected by the scheduler. If no core has 
+ *                          been selected, core is set to NULL.
  * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
  * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
  *                                      scheduling of the task.
@@ -81,7 +86,8 @@ typedef int
 typedef int
 (libanalyzethis_device_sched_task_fn_t)
     (libanalyzethis_device_sched_t *dev_sched,
-     libanalyzethis_task_t         *task);
+     libanalyzethis_task_t         *task,
+     libanalyzethis_core_t         **core);
 
 /*
  * Host-level scheduling.
@@ -134,11 +140,16 @@ typedef int
     (libanalyzethis_host_sched_t **host_sched);
 
 /**
- * Schedule a task using a given host-level scheduler.
+ * Schedule a task using a given host-level scheduler. The scheduler will
+ * identified the target core for the execution of the task; it will not
+ * actually schedule the task for execution on the core, the caller is in
+ * charge of actually assigning the task to the core.
  *
  * @param[in]   host_sched  Structure representing the host-level scheduler to
  *                          use for scheduling the task.
  * @param[in]   task        Structure representing the task to be scheduler.
+ * @param[out]  dev         Device selected by the scheduler. If no device has 
+ *                          been selected, device is set to NULL.
  * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
  * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
  *                                      scheduling of the task.
@@ -148,7 +159,8 @@ typedef int
 typedef int
 (libanalyzethis_host_sched_task_fn_t)
     (libanalyzethis_host_sched_t    **host_sched,
-     libanalyzethis_task_t          *task);
+     libanalyzethis_task_t          *task,
+     libanalyzethis_device_t        **dev);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -163,6 +175,13 @@ typedef int
  *                                      the file is left on the remote host.
  * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
  *                                      invalid.
+ */
+/*
+ * XXX: does the scheduler really need to have this things? This library is
+ * fairly agnostic from the underlying implementation so i would assume that
+ * the caller code will be in charge of copying the files is required. But then
+ * the question is really about how the caller can gather enough info about
+ * file location and task scheduling to orchestrate file copies.
  */
 typedef int
 (libanalyzethis_host_copy_file_fn_t)
@@ -186,6 +205,13 @@ typedef int
  *                                      on the destination host.
  * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
  *                                      invalid.
+ */
+/*
+ * XXX: does the scheduler really need to have this things? This library is
+ * fairly agnostic from the underlying implementation so i would assume that
+ * the caller code will be in charge of moving the files is required. But then
+ * the question is really about how the caller can gather enough info about
+ * file location and task scheduling to orchestrate file transfers.
  */
 typedef int
 (libanalyzethis_host_move_file_fn_t)
@@ -220,7 +246,7 @@ typedef int
  *                                      invalid.
  */
 typedef int
-(libanalyzethis_metasched_init_fn_t)
+(libanalyzethis_meta_sched_init_fn_t)
     (libanalyzethis_cluster_t       *platform,
      libanalyzethis_meta_sched_t    **meta_sched);
 
@@ -238,15 +264,20 @@ typedef int
  *                                      invalid.
  */
 typedef int
-(libanalyzethis_metasched_finalize_fn_t)
+(libanalyzethis_meta_sched_finalize_fn_t)
     (libanalyzethis_meta_sched_t **meta_sched);
 
 /**
- * Schedule a task using a given meta-scheduler.
+ * Schedule a task using a given meta-scheduler. The scheduler will
+ * identified the target host for the execution of the task; it will not
+ * actually schedule the task for execution on the host, the caller is in
+ * charge of actually assigning the task to the host.
  *
  * @param[in]   meta_sched  Structure representing the meta-scheduler to
  *                          use for scheduling the task.
  * @param[in]   task        Structure representing the task to be scheduler.
+ * @param[out]  host        Host selected by the scheduler. If no host has 
+ *                          been selected, host is set to NULL.
  * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
  * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
  *                                      scheduling of the task.
@@ -254,8 +285,9 @@ typedef int
  *                                      invalid.
  */
 typedef int
-(libanalyzethis_metasched_task_fn_t)
+(libanalyzethis_meta_sched_task_fn_t)
     (libanalyzethis_meta_sched_t    *meta_sched,
-     libanalyzethis_task_t          *task);
+     libanalyzethis_task_t          *task,
+     libanalyzethis_host_t          **host);
 
 #endif /* LIBANALYZETHIS_SCHED_H */

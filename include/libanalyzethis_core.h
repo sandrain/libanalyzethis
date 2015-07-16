@@ -12,9 +12,9 @@
  *
  */
 
-#ifndef LIBANALYZETHIS_TASK_H
-#define LIBANALYZETHIS_TASK_H
+#ifndef LIBANALYSISTHIS_CORE_H
+#define LIBANALYSISTHIS_CORE_H
 
-typedef void* libanalyzethis_task_t;
+typedef void* libanalyzethis_core_t;
 
-#endif /* LIBANALYZETHIS_TASK_H */
+#endif /* LIBANALYSISTHIS_CORE_H */
