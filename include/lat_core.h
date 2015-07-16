@@ -12,9 +12,9 @@
  *
  */
 
-#ifndef LIBANALYSISTHIS_CORE_H
-#define LIBANALYSISTHIS_CORE_H
+#ifndef LAT_CORE_H
+#define LAT_CORE_H
 
-typedef void* libanalyzethis_core_t;
+typedef void* lat_core_t;
 
-#endif /* LIBANALYSISTHIS_CORE_H */
+#endif /* LAT_CORE_H */

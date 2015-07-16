@@ -13,8 +13,8 @@
  */
 
 
-#ifndef LIBANALYZETHIS_SCHED_H
-#define LIBANALYZETHIS_SCHED_H
+#ifndef LAT_SCHED_H
+#define LAT_SCHED_H
 
 /*
  * AFE-device level scheduling.
@@ -35,18 +35,15 @@
  *                  core in the context of heterogeneous devices.
  * @param[out]  dev_sched   Structure representing the initialized
  *                          device-level scheduler.
- * @return  LIBANALYZETHIS_SUCCESS      The device-level scheduler was
- *                                      successfully initialized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      initialization of the device-level
- *                                      scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The device-level scheduler was successfully
+ *                          initialized.
+ * @return  LAT_ERROR       A fatal error occured during the initialization of
+ *                          the device-level scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_device_sched_init_fn_t)
-    (libanalyzethis_device_t       *dev,
-     libanalyzethis_device_sched_t **dev_sched);
+(lat_device_sched_init_fn_t) (lat_device_t          *dev,
+                              lat_device_sched_t    **dev_sched);
 
 /**
  * Finalize a device-level scheduler.
@@ -54,17 +51,14 @@ typedef int
  * @param[in/out]   dev_sched  Structure representing the device-level scheduler
  *                             to finalize. Upon successful finalization, the
  *                             pointer is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The device-level scheduler was
- *                                      successfully finalized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      finalization of the device-level
- *                                      scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The device-level scheduler was successfully
+ *                          finalized.
+ * @return  LAT_ERROR       A fatal error occured during the finalization of
+ *                          the device-level scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_device_sched_finalize_fn_t)
-    (libanalyzethis_device_sched_t **dev_sched);
+(lat_device_sched_finalize_fn_t) (lat_device_sched_t **dev_sched);
 
 /**
  * Schedule a task using a given device-level scheduler. The scheduler will
@@ -77,17 +71,15 @@ typedef int
  * @param[in]   task        Structure representing the task to be scheduler.
  * @param[out]  core        Core selected by the scheduler. If no core has 
  *                          been selected, core is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      scheduling of the task.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The task was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          task.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_device_sched_task_fn_t)
-    (libanalyzethis_device_sched_t *dev_sched,
-     libanalyzethis_task_t         *task,
-     libanalyzethis_core_t         **core);
+(lat_device_sched_task_fn_t) (lat_device_sched_t    *dev_sched,
+                              lat_task_t            *task,
+                              lat_core_t            **core);
 
 /*
  * Host-level scheduling.
@@ -108,18 +100,15 @@ typedef int
  *                      the meta-scheduler(s) used on the platform.
  * @param[out] host_sched   Structure representing the initialized host-level
  *                          scheduler.
- * @return  LIBANALYZETHIS_SUCCESS      The host-level scheduler was
- *                                      successfully initialized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      initialization of the host-level
- *                                      scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The host-level scheduler was successfully
+ *                          initialized.
+ * @return  LAT_ERROR       A fatal error occured during the initialization of
+ *                          the host-level scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */ 
 typedef int
-(libanalyzethis_host_sched_init_fn_t)
-    (libanalyzethis_host_t          *host,
-     libanalyzethis_host_sched_t    **host_sched);
+(lat_host_sched_init_fn_t) (lat_host_t          *host,
+                            lat_host_sched_t    **host_sched);
 
 /**
  * Finalize a host-level scheduler.
@@ -127,17 +116,13 @@ typedef int
  * @param[in/out]   host_sched  Structure representing the host-level scheduler
  *                              to finalize. Upon successful finalization, the
  *                              pointer is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The host-level scheduler was
- *                                      successfully finalized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      finalization of the host-level
- *                                      scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The host-level scheduler was successfully finalized.
+ * @return  LAT_ERROR       A fatal error occured during the finalization of
+ *                          the host-level scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_host_sched_finalize_fn_t)
-    (libanalyzethis_host_sched_t **host_sched);
+(lat_host_sched_finalize_fn_t) (lat_host_sched_t **host_sched);
 
 /**
  * Schedule a task using a given host-level scheduler. The scheduler will
@@ -150,17 +135,15 @@ typedef int
  * @param[in]   task        Structure representing the task to be scheduler.
  * @param[out]  dev         Device selected by the scheduler. If no device has 
  *                          been selected, device is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      scheduling of the task.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The task was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          task.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_host_sched_task_fn_t)
-    (libanalyzethis_host_sched_t    **host_sched,
-     libanalyzethis_task_t          *task,
-     libanalyzethis_device_t        **dev);
+(lat_host_sched_task_fn_t) (lat_host_sched_t    **host_sched,
+                            lat_task_t          *task,
+                            lat_device_t        **dev);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -169,12 +152,11 @@ typedef int
  * @param[in]   file        File to be copied.
  * @param[in]   src_host    Location (host) of the file to copy.
  * @param[in]   dest_host   Destination (host) for the file to be copied.
- * @return  LIBANALYZETHIS_SUCCESS      The file was successfully copied.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the copy.
- *                                      We guarantee that no partial copy of
- *                                      the file is left on the remote host.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The file was successfully copied.
+ * @return  LAT_ERROR       A fatal error occured during the copy.
+ *                          We guarantee that no partial copy of the file is
+ *                          left on the remote host.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 /*
  * XXX: does the scheduler really need to have this things? This library is
@@ -184,10 +166,9 @@ typedef int
  * file location and task scheduling to orchestrate file copies.
  */
 typedef int
-(libanalyzethis_host_copy_file_fn_t)
-    (libanalyzethis_file_t   *file,
-     libanalyzethis_host_t   *src_host,
-     libanalyzethis_host_t   *dest_host);
+(lat_host_copy_file_fn_t) (lat_file_t   *file,
+                           lat_host_t   *src_host,
+                           lat_host_t   *dest_host);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -197,14 +178,12 @@ typedef int
  * @param[in]   file        File to be moved.
  * @param[in]   src_host    Location (host) of the file to move.
  * @param[in]   dest_host   Destination (host) for the file to be moved.
- * @return  LIBANALYZETHIS_SUCCESS      The file was successfully moved.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      transfer. The source file is then
- *                                      guaranteed to still exist and we
- *                                      guarantee that no partial copy remain
- *                                      on the destination host.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The file was successfully moved.
+ * @return  LAT_ERROR       A fatal error occured during the transfer. The
+ *                          source file is then guaranteed to still exist and
+ *                          we guarantee that no partial copy remain on the
+ *                          destination host.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 /*
  * XXX: does the scheduler really need to have this things? This library is
@@ -214,10 +193,9 @@ typedef int
  * file location and task scheduling to orchestrate file transfers.
  */
 typedef int
-(libanalyzethis_host_move_file_fn_t)
-    (libanalyzethis_file_t   *file,
-     libanalyzethis_host_t   *src_host,
-     libanalyzethis_host_t   *dest_host);
+(lat_host_move_file_fn_t) (lat_file_t   *file,
+                           lat_host_t   *src_host,
+                           lat_host_t   *dest_host);
 
 /*
  * Meta-scheduler.
@@ -238,17 +216,14 @@ typedef int
  *                          devices.
  * @param[out]  meta_sched  Structure representing the initialized
  *                          meta-scheduler.
- * @return  LIBANALYZETHIS_SUCCESS     The meta-scheduler was successfully
- *                                      initialized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      initialization of the meta-scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The meta-scheduler was successfully initialized.
+ * @return  LAT_ERROR       A fatal error occured during the initialization of
+ *                          the meta-scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_meta_sched_init_fn_t)
-    (libanalyzethis_cluster_t       *platform,
-     libanalyzethis_meta_sched_t    **meta_sched);
+(lat_meta_sched_init_fn_t) (lat_cluster_t       *platform,
+                            lat_meta_sched_t    **meta_sched);
 
 /**
  * Finalize a meta-scheduler.
@@ -256,16 +231,13 @@ typedef int
  * @param[in/out]   meta_sched  Structure representing the meta-scheduler to
  *                              finalize. Upon successful finalization, the
  *                              pointer is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The meta-scheduler was successfully
- *                                      finalized.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      finalization of the meta-scheduler.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The meta-scheduler was successfully finalized.
+ * @return  LAT_ERROR       A fatal error occured during the finalization of
+ *                          the meta-scheduler.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_meta_sched_finalize_fn_t)
-    (libanalyzethis_meta_sched_t **meta_sched);
+(lat_meta_sched_finalize_fn_t) (lat_meta_sched_t **meta_sched);
 
 /**
  * Schedule a task using a given meta-scheduler. The scheduler will
@@ -278,16 +250,14 @@ typedef int
  * @param[in]   task        Structure representing the task to be scheduler.
  * @param[out]  host        Host selected by the scheduler. If no host has 
  *                          been selected, host is set to NULL.
- * @return  LIBANALYZETHIS_SUCCESS      The task was successfully scheduled.
- * @return  LIBANALYZETHIS_ERROR        A fatal error occured during the
- *                                      scheduling of the task.
- * @return  LIBANALYZETHIS_BAD_PARAM    One or more of the parameters is
- *                                      invalid.
+ * @return  LAT_SUCCESS     The task was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          task.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(libanalyzethis_meta_sched_task_fn_t)
-    (libanalyzethis_meta_sched_t    *meta_sched,
-     libanalyzethis_task_t          *task,
-     libanalyzethis_host_t          **host);
+(lat_meta_sched_task_fn_t) (lat_meta_sched_t    *meta_sched,
+                            lat_task_t          *task,
+                            lat_host_t          **host);
 
-#endif /* LIBANALYZETHIS_SCHED_H */
+#endif /* LAT_SCHED_H */

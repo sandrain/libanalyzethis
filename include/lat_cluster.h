@@ -12,9 +12,9 @@
  *
  */
 
-#ifndef LIBANALYZETHIS_CLUSTER_H
-#define LIBANALYZETHIS_CLUSTER_H
+#ifndef LAT_CLUSTER_H
+#define LAT_CLUSTER_H
 
-typedef void* libanalyzethis_cluster_t;
+typedef void* lat_cluster_t;
 
-#endif /* LIBANALYZETHIS_CLUSTER_H */
+#endif /* LAT_CLUSTER_H */

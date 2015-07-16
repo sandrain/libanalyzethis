@@ -12,11 +12,11 @@
  *
  */
 
-#ifndef LIBANALYZETHIS_DEV_H
-#define LIBANALYZETHIS_DEV_H
+#ifndef LAT_DEV_H
+#define LAT_DEV_H
 
-typedef void* libanalyzethis_device_t;
+typedef void* lat_device_t;
 
-typedef void* libanalyzethis_device_sched_t;
+typedef void* lat_device_sched_t;
 
-#endif /* LIBANALYZETHIS_DEV_H */
+#endif /* LAT_DEV_H */

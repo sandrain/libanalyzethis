@@ -12,9 +12,9 @@
  *
  */
 
-#ifndef LIBANALYZETHIS_TASK_H
-#define LIBANALYZETHIS_TASK_H
+#ifndef LAT_TASK_H
+#define LAT_TASK_H
 
-typedef void* libanalyzethis_task_t;
+typedef void* lat_task_t;
 
-#endif /* LIBANALYZETHIS_TASK_H */
+#endif /* LAT_TASK_H */

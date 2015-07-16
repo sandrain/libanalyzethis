@@ -12,9 +12,9 @@
  *
  */
 
-#ifndef LIBANALYZETHIS_FILE_H
-#define LIBANALYZETHIS_FILE_H
+#ifndef LAT_FILE_H
+#define LAT_FILE_H
 
-typedef void* libanalyzethis_file_t;
+typedef void* lat_file_t;
 
-#endif /* LIBANALYZETHIS_FILE_H */
+#endif /* LAT_FILE_H */
