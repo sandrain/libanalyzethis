@@ -5,9 +5,9 @@
  */
 static PyObject* py_device_sched_init (PyObject *self, PyObject *args)
 {
-    Py_buffer *buf_ret = NULL;
+    char *str = "Hello World";
 
-    return Py_BuildValue ("z*", buf_ret);
+    return Py_BuildValue ("s", str, strlen(str));
 }
 
 static PyObject* py_device_sched_finalize (PyObject *self, PyObject *args)
@@ -90,9 +90,15 @@ static PyMethodDef pythonSched_methods[] = {
     {"lat_host_sched_init", py_host_sched_init, METH_VARARGS},
     {"lat_host_sched_finalize", py_host_sched_finalize, METH_VARARGS},
     {"lat_host_sched_task", py_host_sched_task, METH_VARARGS},
-    {"lat_host_sched_copy_file", py_host_sched_copy_file, METH_VARARGS},
-    {"lat_host_sched_move_file", py_host_sched_move_file, METH_VARARGS},
+    {"lat_host_copy_file", py_host_copy_file, METH_VARARGS},
+    {"lat_host_move_file", py_host_move_file, METH_VARARGS},
     {"lat_meta_sched_init", py_meta_sched_init, METH_VARARGS},
     {"lat_meta_sched_finalize", py_meta_sched_finalize, METH_VARARGS},
     {"lat_meta_sched_task", py_meta_sched_task, METH_VARARGS},
 };
+
+PyMODINIT_FUNC
+initlat_module (void)
+{
+    (void) Py_InitModule ("lat_module", pythonSched_methods);
+}
