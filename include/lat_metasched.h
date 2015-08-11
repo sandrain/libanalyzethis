@@ -12,14 +12,10 @@
  *
  */
 
-#ifndef LAT_CONSTANTS_H
-#define LAT_CONSTANTS_H
+#ifndef LAT_METASCHED_H
+#define LAT_METASCHED_H
 
-/* Return codes */
-enum {
-    LAT_SUCCESS     = 0,
-    LAT_ERROR,
-    LAT_BAD_PARAM
-};
+typedef void* lat_meta_sched_t;
 
-#endif /* LAT_CONSTANTS_H */
+
+#endif /* LAT_METASCHED_H */

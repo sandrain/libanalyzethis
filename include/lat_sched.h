@@ -16,6 +16,16 @@
 #ifndef LAT_SCHED_H
 #define LAT_SCHED_H
 
+#include <stdio.h>
+
+#include "lat_cluster.h"
+#include "lat_core.h"
+#include "lat_dev.h"
+#include "lat_file.h"
+#include "lat_host.h"
+#include "lat_metasched.h"
+#include "lat_task.h"
+
 /*
  * AFE-device level scheduling.
  *
@@ -42,8 +52,8 @@
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_device_sched_init_fn_t) (lat_device_t          *dev,
-                              lat_device_sched_t    **dev_sched);
+(*lat_device_sched_init_fn_t) (lat_device_t          *dev,
+                               lat_device_sched_t    **dev_sched);
 
 /**
  * Finalize a device-level scheduler.
@@ -58,7 +68,7 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_device_sched_finalize_fn_t) (lat_device_sched_t **dev_sched);
+(*lat_device_sched_finalize_fn_t) (lat_device_sched_t **dev_sched);
 
 /**
  * Schedule a task using a given device-level scheduler. The scheduler will
@@ -77,9 +87,9 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_device_sched_task_fn_t) (lat_device_sched_t    *dev_sched,
-                              lat_task_t            *task,
-                              lat_core_t            **core);
+(*lat_device_sched_task_fn_t) (lat_device_sched_t    *dev_sched,
+                               lat_task_t            *task,
+                               lat_core_t            **core);
 
 /*
  * Host-level scheduling.
@@ -107,8 +117,8 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */ 
 typedef int
-(lat_host_sched_init_fn_t) (lat_host_t          *host,
-                            lat_host_sched_t    **host_sched);
+(*lat_host_sched_init_fn_t) (lat_host_t          *host,
+                             lat_host_sched_t    **host_sched);
 
 /**
  * Finalize a host-level scheduler.
@@ -122,7 +132,7 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_host_sched_finalize_fn_t) (lat_host_sched_t **host_sched);
+(*lat_host_sched_finalize_fn_t) (lat_host_sched_t **host_sched);
 
 /**
  * Schedule a task using a given host-level scheduler. The scheduler will
@@ -141,9 +151,9 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_host_sched_task_fn_t) (lat_host_sched_t    **host_sched,
-                            lat_task_t          *task,
-                            lat_device_t        **dev);
+(*lat_host_sched_task_fn_t) (lat_host_sched_t    **host_sched,
+                             lat_task_t          *task,
+                             lat_device_t        **dev);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -166,9 +176,9 @@ typedef int
  * file location and task scheduling to orchestrate file copies.
  */
 typedef int
-(lat_host_copy_file_fn_t) (lat_file_t   *file,
-                           lat_host_t   *src_host,
-                           lat_host_t   *dest_host);
+(*lat_host_copy_file_fn_t) (lat_file_t   *file,
+                            lat_host_t   *src_host,
+                            lat_host_t   *dest_host);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -193,9 +203,9 @@ typedef int
  * file location and task scheduling to orchestrate file transfers.
  */
 typedef int
-(lat_host_move_file_fn_t) (lat_file_t   *file,
-                           lat_host_t   *src_host,
-                           lat_host_t   *dest_host);
+(*lat_host_move_file_fn_t) (lat_file_t   *file,
+                            lat_host_t   *src_host,
+                            lat_host_t   *dest_host);
 
 /*
  * Meta-scheduler.
@@ -222,8 +232,8 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_meta_sched_init_fn_t) (lat_cluster_t       *platform,
-                            lat_meta_sched_t    **meta_sched);
+(*lat_meta_sched_init_fn_t) (lat_cluster_t       *platform,
+                             lat_meta_sched_t    **meta_sched);
 
 /**
  * Finalize a meta-scheduler.
@@ -237,7 +247,7 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_meta_sched_finalize_fn_t) (lat_meta_sched_t **meta_sched);
+(*lat_meta_sched_finalize_fn_t) (lat_meta_sched_t **meta_sched);
 
 /**
  * Schedule a task using a given meta-scheduler. The scheduler will
@@ -256,8 +266,47 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(lat_meta_sched_task_fn_t) (lat_meta_sched_t    *meta_sched,
-                            lat_task_t          *task,
-                            lat_host_t          **host);
+(*lat_meta_sched_task_fn_t) (lat_meta_sched_t    *meta_sched,
+                             lat_task_t          *task,
+                             lat_host_t          **host);
+
+/**
+ * Schedule a workflow using a offline, static policy. For that, a file
+ * representing the workflow is passed in and the resulting workflow (with
+ * some task placement) is saved to a file for which a pointer is returned.
+ *
+ * @param[in]   f_in    XML file representing the workflow to schedule.
+ * @param[out]  f_out   Pointer to XML file representing the workflow with
+ *                      placed tasks.
+ * @return  LAT_SUCCESS     The workflow was successfully (but maybe partially)
+ *                          scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          workflow.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+typedef int
+(*lat_meta_sched_workflow_fn_t) (FILE    *f_in,
+                                 FILE    **f_out);
+
+/**
+ * Basic structure of a module.
+ */
+struct lat_module_t {
+    lat_device_sched_init_fn_t      lat_module_device_sched_init;
+    lat_device_sched_finalize_fn_t  lat_module_device_sched_finalize;
+    lat_device_sched_task_fn_t      lat_module_device_sched_task;
+    lat_host_sched_init_fn_t        lat_module_host_sched_init;
+    lat_host_sched_finalize_fn_t    lat_module_host_sched_finalize;
+    lat_host_sched_task_fn_t        lat_module_host_sched_task;
+    lat_host_copy_file_fn_t         lat_module_host_copy_file;
+    lat_host_move_file_fn_t         lat_module_host_move_file;
+    lat_meta_sched_init_fn_t        lat_module_meta_sched_init;
+    lat_meta_sched_finalize_fn_t    lat_module_meta_sched_finalize;
+    lat_meta_sched_task_fn_t        lat_module_meta_sched_task;
+    lat_meta_sched_workflow_fn_t    lat_module_meta_sched_workflow;
+};
+typedef struct lat_module_t lat_module_t;
+
+extern lat_module_t lat_module;
 
 #endif /* LAT_SCHED_H */

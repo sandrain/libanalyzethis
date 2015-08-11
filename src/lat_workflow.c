@@ -12,14 +12,13 @@
  *
  */
 
-#ifndef LAT_CONSTANTS_H
-#define LAT_CONSTANTS_H
+#include "lat_workflow.h"
 
-/* Return codes */
-enum {
-    LAT_SUCCESS     = 0,
-    LAT_ERROR,
-    LAT_BAD_PARAM
-};
+int
+lat_workflow_static_placement_noop (FILE *f_in,
+                                    FILE **f_out)
+{
+    f_out = &f_in;
 
-#endif /* LAT_CONSTANTS_H */
+    return LAT_SUCCESS;
+}
