@@ -25,7 +25,7 @@
  * runtime only.
  */
 int
-lat_workflow_static_placement_noop (FILE *f_in,
-                                    FILE **f_out);
+lat_workflow_static_placement_noop (char *f_in,
+                                    char **f_out);
 
 #endif /* LAT_WORKFLOW_H */

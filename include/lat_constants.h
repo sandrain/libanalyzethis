@@ -19,7 +19,8 @@
 enum {
     LAT_SUCCESS     = 0,
     LAT_ERROR,
-    LAT_BAD_PARAM
+    LAT_BAD_PARAM,
+    LAT_NOT_IMPL
 };
 
 #endif /* LAT_CONSTANTS_H */
