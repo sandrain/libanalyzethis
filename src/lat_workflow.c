@@ -12,13 +12,21 @@
  *
  */
 
+#include <string.h>
 #include "lat_workflow.h"
 
 int
-lat_workflow_static_placement_noop (FILE *f_in,
-                                    FILE **f_out)
+lat_workflow_static_placement_noop (char *f_in,
+                                    char **f_out)
 {
-    f_out = &f_in;
+    if (f_in == NULL || f_out == NULL) {
+        fprintf (stderr,
+                 "[%s:%d] ERROR: Invalid parameter(s)\n",
+                 __func__, __LINE__);
+        return LAT_BAD_PARAM;
+    }
+
+    *f_out = strdup (f_in);
 
     return LAT_SUCCESS;
 }
