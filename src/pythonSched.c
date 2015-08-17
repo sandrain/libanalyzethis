@@ -103,6 +103,7 @@ py_meta_sched_workflow (PyObject *self, PyObject *args)
     if (lat_module.lat_module_meta_sched_workflow != NULL) {
         if (!PyArg_ParseTuple (args, "s", &file_in)) {
             rc = LAT_ERROR;
+            file_out = strdup ("NULL");
         } else {
             rc = lat_module.lat_module_meta_sched_workflow (file_in, &file_out);
             if (rc != LAT_SUCCESS) {
@@ -110,12 +111,11 @@ py_meta_sched_workflow (PyObject *self, PyObject *args)
                          "[%s:%d] ERROR: lat_module_meta_sched_workflow() "
                          "failed\n",
                          __func__, __LINE__);
-            } else {
-                fprintf (stderr, "Output file: %s\n", file_out);
             }
         }
     } else {
         rc = LAT_NOT_IMPL;
+        file_out = strdup ("NULL");
     }
 
     /* XXX figure out how we can safely free file_out. Note that Python can

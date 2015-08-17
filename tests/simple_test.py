@@ -64,7 +64,7 @@ else:
     print "Success.\n"
 
 print "Calling lat_meta_sched_workflow()..."
-rc = py_lat_module.lat_meta_sched_workflow()
+(rc, output_file) = py_lat_module.lat_meta_sched_workflow("dummy_input")
 if (rc != 0):
     print "ERROR: lat_meta_sched_workflow() failed (ret: %d)\n" % rc
 else:
