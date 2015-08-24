@@ -106,6 +106,7 @@ py_meta_sched_workflow (PyObject *self, PyObject *args)
     if (lat_module.lat_module_meta_sched_workflow != NULL) {
         if (!PyArg_ParseTuple (args, "s", &file_in)) {
             rc = LAT_ERROR;
+            files_out = NULL;
         } else {
             rc = lat_module.lat_module_meta_sched_workflow (file_in,
                                                             &n_files_out,
@@ -134,10 +135,12 @@ py_meta_sched_workflow (PyObject *self, PyObject *args)
         }
     } else {
         rc = LAT_NOT_IMPL;
+        files_out = NULL;
     }
 
-    /* XXX figure out how we can safely free file_out. Note that Python can
-           retain a variable, it might be a solution here */
+    /* XXX figure out how we can safely free the memory that has been allocated.
+           Note that Python can retain a variable, it might be a solution here.
+     */
 
     return list;
 }
