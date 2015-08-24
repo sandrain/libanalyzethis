@@ -96,22 +96,40 @@ py_meta_sched_task (PyObject *self, PyObject *args)
 static PyObject*
 py_meta_sched_workflow (PyObject *self, PyObject *args)
 {
-    int     rc              = LAT_SUCCESS;
-    char    *file_out       = NULL;
-    char    *file_in        = NULL;
+    int         rc          = LAT_SUCCESS;
+    char        **files_out = NULL;
+    char        *file_in    = NULL;
+    PyObject    *list       = NULL;
+    int         i;
+    int         n_files_out;
 
     if (lat_module.lat_module_meta_sched_workflow != NULL) {
         if (!PyArg_ParseTuple (args, "s", &file_in)) {
             rc = LAT_ERROR;
         } else {
-            rc = lat_module.lat_module_meta_sched_workflow (file_in, &file_out);
+            rc = lat_module.lat_module_meta_sched_workflow (file_in,
+                                                            &n_files_out,
+                                                            &files_out);
             if (rc != LAT_SUCCESS) {
                 fprintf (stderr,
                          "[%s:%d] ERROR: lat_module_meta_sched_workflow() "
                          "failed\n",
                          __func__, __LINE__);
             } else {
-                fprintf (stderr, "Output file: %s\n", file_out);
+                if (list == NULL) {
+                    list = PyList_New(n_files_out);
+                }
+
+                for (i = 0; i < n_files_out; i++) {
+                    PyObject *f = PyString_FromString (files_out[i]);
+                    if (f == NULL) {
+                        fprintf (stderr,
+                                 "[%s:%d] ERROR: PyString_FromString() failed\n",
+                                 __func__, __LINE__);
+                        return NULL;
+                    }
+                    PyList_SET_ITEM (list, i, f);
+                }
             }
         }
     } else {
@@ -121,7 +139,7 @@ py_meta_sched_workflow (PyObject *self, PyObject *args)
     /* XXX figure out how we can safely free file_out. Note that Python can
            retain a variable, it might be a solution here */
 
-    return Py_BuildValue ("is", rc, file_out);
+    return list;
 }
 
 /*

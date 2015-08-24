@@ -277,7 +277,8 @@ typedef int
  *
  * @param[in]   f_in    Path to the XML file representing the workflow to
  *                      schedule.
- * @param[out]  f_out   Pointer to the string representing the path of the
+ * @param[out]  n_out   Number of filenames returned back.
+ * @param[out]  f_out   Array to the strings representing the path of the
  *                      XML file representing the workflow with placed tasks.
  * @return  LAT_SUCCESS     The workflow was successfully (but maybe partially)
  *                          scheduled.
@@ -286,8 +287,9 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(*lat_meta_sched_workflow_fn_t) (char    *f_in,
-                                 char    **f_out);
+(*lat_meta_sched_workflow_fn_t) (char   *f_in,
+                                 int    *n_out,
+                                 char   ***f_out);
 
 /**
  * Basic structure of a module.
