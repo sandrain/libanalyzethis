@@ -18,11 +18,15 @@ print "Success.\n"
 # function for static placement (we do not have the plugin mechanism in place
 # yet).
 print "Calling the no-op static placement function. No task will be placed, will get the same file as the one passed as input"
-(rc, output_file) = py_lat_module.lat_meta_sched_workflow ("cybershake_60")
-if (rc != 0):
+sub_workflows = py_lat_module.lat_meta_sched_workflow ("cybershake_60")
+if (sub_workflows == None):
     print "ERROR: lat_meta_sched_workflow() failed (%d)\n" % rc
 else:
-    print "Success.\n"
+    print "Success."
+
+print "Got %d workflow back:" % (len(sub_workflows))
+for i in range(len(sub_workflows)):
+    print "\t%d: %s" % (i, sub_workflows[i])
 
 print "Calling lat_meta_sched_finalize()..."
 rc = py_lat_module.lat_meta_sched_finalize()
