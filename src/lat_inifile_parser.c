@@ -71,6 +71,7 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
 
         /* We check whether it is the begining of a block */
         if (line[pos] == '[') {
+            int             j;
             lat_ini_block_t *new_block;
 
             /* If so we extract the name of the block */
@@ -95,7 +96,7 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
                 goto exit;
             }
 
-            for (int j = 0; j < end - pos; j++) {
+            for (j = 0; j < end - pos; j++) {
                 block_name[j] = line[pos + j];
             }
             block_name[end - pos] = '\0';
@@ -108,7 +109,8 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
 
             ADD_BLOCK_TO_INICONFIG (iniconfig, new_block);
         } else {
-            lat_ini_kv_t *new_keyval;
+            int             j;
+            lat_ini_kv_t    *new_keyval;
 
             /* If we end up here, we have a key/value pair */
             equal_pos = pos;
@@ -135,7 +137,7 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
                 goto exit;
             }
 
-            for (int j = 0; j < key_end - pos; j++) {
+            for (j = 0; j < key_end - pos; j++) {
                 key[j] = line[pos + j];
             }
             key[key_end - pos] = '\0';
@@ -162,7 +164,7 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
                 goto exit;
             }
 
-            for (int j = 0; j < value_end - equal_pos; j++) {
+            for (j = 0; j < value_end - equal_pos; j++) {
                 value[j] = line[equal_pos + j];
             }
             value[value_end - equal_pos] = '\0';
@@ -191,9 +193,11 @@ void lat_display_inikeyval (lat_ini_kv_t *kv)
 void
 lat_display_iniblock (lat_ini_block_t *block)
 {
+    int i;
+
     fprintf (stdout, "Block name: %s - Number of key/value pairs: %zd\n",
              block->name, block->num_keyvalue_pairs);
-    for (int i = 0; i < block->num_keyvalue_pairs; i++) {
+    for (i = 0; i < block->num_keyvalue_pairs; i++) {
         lat_display_inikeyval (block->keyvalue_pairs[i]);
     }
 }
@@ -201,8 +205,10 @@ lat_display_iniblock (lat_ini_block_t *block)
 void
 lat_display_iniconfig (lat_iniconfig_t *cfg)
 {
+    int i;
+
     fprintf (stdout, "Number of blocks: %zd\n", cfg->num_blocks);
-    for (int i = 0; i < cfg->num_blocks; i++) {
+    for (i = 0; i < cfg->num_blocks; i++) {
         lat_display_iniblock (cfg->blocks[i]);
     }
 }
