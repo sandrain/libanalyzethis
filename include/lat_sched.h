@@ -17,6 +17,7 @@
 #define LAT_SCHED_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "lat_cluster.h"
 #include "lat_core.h"
@@ -25,6 +26,20 @@
 #include "lat_host.h"
 #include "lat_metasched.h"
 #include "lat_task.h"
+
+/*
+ * Required functions for the management of a module.
+ */
+
+/**
+ * Generic module initialization function. Parameters are passed in a generic way so we can
+ * accomodate any module.
+ */
+typedef int
+(*lat_module_init_fn_t) (int argc, char **argv);
+
+typedef int
+(*lat_module_finalize_fn_t) (void);
 
 /*
  * AFE-device level scheduling.
@@ -295,6 +310,8 @@ typedef int
  * Basic structure of a module.
  */
 struct lat_module_t {
+    /* Module function pointers */
+    lat_module_init_fn_t            lat_module_init;
     lat_device_sched_init_fn_t      lat_module_device_sched_init;
     lat_device_sched_finalize_fn_t  lat_module_device_sched_finalize;
     lat_device_sched_task_fn_t      lat_module_device_sched_task;
@@ -307,6 +324,10 @@ struct lat_module_t {
     lat_meta_sched_finalize_fn_t    lat_module_meta_sched_finalize;
     lat_meta_sched_task_fn_t        lat_module_meta_sched_task;
     lat_meta_sched_workflow_fn_t    lat_module_meta_sched_workflow;
+    lat_module_finalize_fn_t        lat_module_finalize;
+    /* Module's data */
+    bool                            verbose;
+    lat_cluster_t                   *syscfg;
 };
 typedef struct lat_module_t lat_module_t;
 

@@ -14,8 +14,10 @@
 
 #include "lat_sched.h"
 #include "lat_workflow.h"
+#include "lat_iniconfig_sched.h"
 
 lat_module_t lat_module = {
+    .lat_module_init                    = lat_iniconfig_platform_init,
     .lat_module_device_sched_init       = NULL,
     .lat_module_device_sched_finalize   = NULL,
     .lat_module_device_sched_task       = NULL,
@@ -28,4 +30,7 @@ lat_module_t lat_module = {
     .lat_module_meta_sched_finalize     = NULL,
     .lat_module_meta_sched_task         = NULL,
     .lat_module_meta_sched_workflow     = lat_workflow_static_placement_noop,
+    .lat_module_finalize                = NULL,
+    .verbose                            = false,
+    .syscfg                             = NULL,
 };
