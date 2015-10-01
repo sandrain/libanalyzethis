@@ -17,6 +17,10 @@
 
 #include "lat_constants.h"
 #include "lat_sched.h"
+#include "lat_debug.h"
+
+lat_device_t        *lat_device         = NULL;
+lat_device_sched_t  *lat_device_sched   = NULL;
 
 /*
  * Public APIs accessible from Python code
@@ -51,6 +55,8 @@ py_sched_module_init (PyObject *self, PyObject *args)
         goto fn_exit;
     }
 
+    lat_device = &lat_module.syscfg->server_cfg[0].afes_cfg[0];
+
  fn_exit:
     return Py_BuildValue ("i", rc); 
 }
@@ -66,8 +72,21 @@ py_sched_module_finalize (PyObject *self, PyObject *args)
 static PyObject*
 py_device_sched_init (PyObject *self, PyObject *args)
 {
-    int rc = LAT_SUCCESS;
+    int                 rc = LAT_SUCCESS;
 
+    rc = lat_module.lat_module_device_sched_init (lat_device,
+                                                  &lat_device_sched);
+    if (rc != LAT_SUCCESS) {
+        LAT_ERR_MSG (("lat_module_device_sched_init() failed"));
+        goto exit_fn;
+    }
+
+    if (lat_device_sched == NULL) {
+        LAT_ERR_MSG (("Invalid device scheduler object"));
+        goto exit_fn;
+    }
+
+ exit_fn:
     return Py_BuildValue ("i", rc);
 }
 
@@ -82,9 +101,23 @@ py_device_sched_finalize (PyObject *self, PyObject *args)
 static PyObject*
 py_device_sched_task (PyObject *self, PyObject *args)
 {
-    int rc = LAT_SUCCESS;
+    int         rc;
+    lat_core_t  *core;
+    int         core_id;
+    lat_task_t  *task = NULL;
 
-    return Py_BuildValue ("i", rc);
+    rc = lat_module.lat_module_device_sched_task (lat_device_sched,
+                                                  task,
+                                                  &core);
+    if (rc != LAT_SUCCESS)
+        LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
+
+    /* XXX some uglyness for now: we go back to python, we break the idea of
+           having an opaque handle, explicitly cast the value and return it */
+
+    core_id = (int)*core;
+
+    return Py_BuildValue ("i", core_id);
 }
 
 static PyObject*

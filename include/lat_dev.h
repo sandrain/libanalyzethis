@@ -34,4 +34,8 @@ typedef void* lat_device_sched_t;
     }                                                                       \
 } while (0)
 
+#define LAT_DEVICE_NUM_CORES(dev) do {  \
+    dev->num_cores                      \
+} while (0)
+
 #endif /* LAT_DEV_H */

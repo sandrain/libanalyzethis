@@ -15,12 +15,13 @@
 #include "lat_sched.h"
 #include "lat_workflow.h"
 #include "lat_iniconfig_sched.h"
+#include "lat_device.h"
 
 lat_module_t lat_module = {
     .lat_module_init                    = lat_iniconfig_platform_init,
-    .lat_module_device_sched_init       = NULL,
+    .lat_module_device_sched_init       = lat_device_sched_init_rr,
     .lat_module_device_sched_finalize   = NULL,
-    .lat_module_device_sched_task       = NULL,
+    .lat_module_device_sched_task       = lat_device_sched_task_rr,
     .lat_module_host_sched_init         = NULL,
     .lat_module_host_sched_finalize     = NULL,
     .lat_module_host_sched_task         = NULL,
