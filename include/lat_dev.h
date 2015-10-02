@@ -16,6 +16,7 @@
 #define LAT_DEV_H
 
 typedef struct lat_device_t {
+    ssize_t dev_id;
     ssize_t num_cores;
 } lat_device_t;
 
@@ -25,6 +26,7 @@ typedef void* lat_device_sched_t;
     d = malloc (sizeof (lat_device_t)); \
     if (d != NULL) {                    \
         d->num_cores = 0;               \
+        d->dev_id    = -1;              \
     }                                   \
 } while (0)
 

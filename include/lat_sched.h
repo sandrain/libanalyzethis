@@ -166,7 +166,7 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(*lat_host_sched_task_fn_t) (lat_host_sched_t    **host_sched,
+(*lat_host_sched_task_fn_t) (lat_host_sched_t    *host_sched,
                              lat_task_t          *task,
                              lat_device_t        **dev);
 
@@ -332,5 +332,10 @@ struct lat_module_t {
 typedef struct lat_module_t lat_module_t;
 
 extern lat_module_t lat_module;
+
+/**
+ * Entry point function to initialize the LAT module.
+ */
+int lat_init_module ();
 
 #endif /* LAT_SCHED_H */

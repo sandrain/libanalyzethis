@@ -161,3 +161,9 @@ lat_iniconfig_platform_init (int argc, char **argv)
 
     return LAT_SUCCESS;
 }
+
+int
+lat_iniconfig_platform_fini ()
+{
+    return LAT_SUCCESS;
+}

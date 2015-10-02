@@ -5,8 +5,8 @@ python_module: setup.py pythonSched.c
 
 lat_module: lat_module.c lat_workflow.c lat_inifile_parser.c lat_debug.c lat_iniconfig_sched.c lat_device.c
 	gcc -c lat_debug.c
-	gcc -I../include/ -c lat_module.c lat_workflow.c lat_iniconfig_sched.c lat_inifile_parser.c lat_device.c
-	ld -r lat_module.o lat_workflow.o lat_iniconfig_sched.o lat_inifile_parser.o lat_device.o -o lat.o
+	gcc -I../include/ -c lat_module.c lat_workflow.c lat_iniconfig_sched.c lat_inifile_parser.c lat_device.c lat_host_sched.c
+	ld -r lat_module.o lat_workflow.o lat_iniconfig_sched.o lat_inifile_parser.o lat_device.o lat_host_sched.o -o lat.o
 
 clean:
-	rm -f py_lat_module.so
+	rm -f py_lat_module.so lat_module.o lat_workflow.o lat_iniconfig_sched.o lat_inifile_parser.o lat_device.o lat_host_sched.o lat.o lat_debug.o
