@@ -29,5 +29,17 @@ lat_host_sched_task_rr (lat_host_sched_t    *host_sched,
                         lat_task_t          *task,
                         lat_device_t        **dev);
 
+int
+lat_meta_sched_init_rr (lat_cluster_t    *cluster,
+                        lat_meta_sched_t **meta_sched);
+
+int
+lat_meta_sched_fini_rr (lat_meta_sched_t **meta_sched);
+
+int
+lat_meta_sched_task_rr (lat_meta_sched_t    *meta_sched,
+                        lat_task_t          *task,
+                        lat_host_t          **host);
+
 #endif /* LAT_HOST_SCHED_H */
 

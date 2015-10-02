@@ -39,3 +39,4 @@ lat_workflow_static_placement_noop (char    *f_in,
 
     return LAT_SUCCESS;
 }
+

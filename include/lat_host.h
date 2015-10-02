@@ -18,6 +18,7 @@
 #include "lat_dev.h"
 
 typedef struct lat_host_t {
+    ssize_t         host_id;
     ssize_t         num_afes;
     lat_device_t    *afes_cfg;
 } lat_host_t;
@@ -25,6 +26,7 @@ typedef struct lat_host_t {
 #define ALLOC_HOST_T(h) do {            \
     h = malloc (sizeof (lat_host_t));   \
     if (h != NULL) {                    \
+        h->host_id  = -1;               \
         h->num_afes = 0;                \
         h->afes_cfg = NULL;             \
     }                                   \

@@ -32,7 +32,11 @@ core_id = py_lat_module.lat_device_sched_task ()
 print "Assigned core ID: %d" % core_id
 
 print "Simulating the scheduling of a task on a specific host..."
-host_id = py_lat_module.lat_host_sched_task ()
+afe_id = py_lat_module.lat_host_sched_task ()
+print "Assigned AFE ID: %d" % afe_id
+
+print "Simulating the scheduling of a task across a set of servers..."
+host_id = py_lat_module.lat_meta_sched_task ()
 print "Assigned host ID: %d" % host_id
 
 # XXX Finalize the various scheduler
