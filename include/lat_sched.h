@@ -336,6 +336,6 @@ extern lat_module_t lat_module;
 /**
  * Entry point function to initialize the LAT module.
  */
-int lat_init_module ();
+int lat_init_module (void);
 
 #endif /* LAT_SCHED_H */

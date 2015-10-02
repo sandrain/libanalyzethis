@@ -13,6 +13,7 @@
  */
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "lat_debug.h"
 

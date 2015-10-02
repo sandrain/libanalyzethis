@@ -22,6 +22,6 @@ int
 lat_iniconfig_platform_init (int argc, char **argv);
 
 int
-lat_iniconfig_platform_fini ();
+lat_iniconfig_platform_fini (void);
 
 #endif /* LAT_INICONFIG_SCHED_H */
