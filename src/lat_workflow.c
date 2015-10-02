@@ -16,6 +16,7 @@
 #include <stdlib.h>
 
 #include "lat_workflow.h"
+#include "lat_debug.h"
 
 int
 lat_workflow_static_placement_noop (char    *f_in,
@@ -26,9 +27,7 @@ lat_workflow_static_placement_noop (char    *f_in,
     char **a;
 
     if (f_in == NULL || f_out == NULL) {
-        fprintf (stderr,
-                 "[%s:%d] ERROR: Invalid parameter(s)\n",
-                 __func__, __LINE__);
+        LAT_ERR_MSG (("Invalid parameter(s)"));
         return LAT_BAD_PARAM;
     }
 
@@ -40,3 +39,4 @@ lat_workflow_static_placement_noop (char    *f_in,
 
     return LAT_SUCCESS;
 }
+

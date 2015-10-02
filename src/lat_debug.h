@@ -29,7 +29,7 @@ char *lat_varg_to_str (const char *fmt, ...);
     if (__s == NULL)                                                                    \
         fprintf (stderr, "ERROR: Invalid string in LAT_FATAL\n");                       \
     else {                                                                              \
-        fprintf (stderr, "[%s:%d:%s] ERROR: %s", __FILE__, __LINE__, __func__, __s);    \
+        fprintf (stderr, "[%s:%d:%s] ERROR: %s\n", __FILE__, __LINE__, __func__, __s);    \
         free (__s);                                                                     \
     }                                                                                   \
 } while (0)
@@ -43,30 +43,34 @@ char *lat_varg_to_str (const char *fmt, ...);
 } while(0)                      
 
 #if LAT_DEBUG == 1
-#define LAT_INFO(a) do {                                                                \
-    char *__s = NULL;                                                                   \
-    __s = lat_varg_to_str a;                                                            \
-    if (__s == NULL)                                                                    \
-        fprintf (stderr, "ERROR: Invalid string in LAT_FATAL\n");                       \
-    else                                                                                \
-        fprintf (stdout, "[%s:%d:%s] INFO: %s", __FILE__, __LINE__, __func__, __s);     \
-        free (__s);                                                                     \
-    }                                                                                   \
+#define LAT_INFO(a) do {                                            \
+    char *__s = NULL;                                               \
+    __s = lat_varg_to_str a;                                        \
+    if (__s == NULL)                                                \
+        fprintf (stderr, "ERROR: Invalid string in LAT_FATAL\n");   \
+    else {                                                          \
+        fprintf (stdout,                                            \
+                 "[%s:%d:%s] INFO: %s\n",                           \
+                 __FILE__, __LINE__, __func__, __s);                \
+        free (__s);                                                 \
+    }                                                               \
 } while (0)
 #else
 #define LAT_INFO (a) do {} while(0)
 #endif /* LAT_INFO */
 
 #if LAT_DEBUG == 1
-#define LAT_WARN(a) do {                                                                \
-    char *__s = NULL;                                                                   \
-    __s = lat_varg_to_str a;                                                            \
-    if (__s == NULL)                                                                    \
-        fprintf (stderr, "ERROR: Invalid string in LAT_FATAL\n");                       \
-    else                                                                                \
-        fprintf (stdout, "[%s:%d:%s] WARN: %s", __FILE__, __LINE__, __func__, __s);     \
-        free (__s);                                                                     \
-    }                                                                                   \
+#define LAT_WARN(a) do {                                            \
+    char *__s = NULL;                                               \
+    __s = lat_varg_to_str a;                                        \
+    if (__s == NULL)                                                \
+        fprintf (stderr, "ERROR: Invalid string in LAT_FATAL\n");   \
+    else {                                                          \
+        fprintf (stdout,                                            \
+                 "[%s:%d:%s] WARN: %s\n",                           \
+                 __FILE__, __LINE__, __func__, __s);                \
+        free (__s);                                                 \
+    }                                                               \
 } while (0)
 #else
 #define LAT_WARNL (a) do {} while(0)

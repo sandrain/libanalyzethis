@@ -15,8 +15,29 @@
 #ifndef LAT_DEV_H
 #define LAT_DEV_H
 
-typedef void* lat_device_t;
+typedef struct lat_device_t {
+    ssize_t dev_id;
+    ssize_t num_cores;
+} lat_device_t;
 
 typedef void* lat_device_sched_t;
+
+#define ALLOC_DEVICE_T(d) do {          \
+    d = malloc (sizeof (lat_device_t)); \
+    if (d != NULL) {                    \
+        d->num_cores = 0;               \
+        d->dev_id    = -1;              \
+    }                                   \
+} while (0)
+
+#define DISPLAY_DEVICE_T(d) do {                                            \
+    if (d != NULL) {                                                        \
+        fprintf (stdout, "Number of cores per AFE: %zd\n", d->num_cores);   \
+    }                                                                       \
+} while (0)
+
+#define LAT_DEVICE_NUM_CORES(dev) do {  \
+    dev->num_cores                      \
+} while (0)
 
 #endif /* LAT_DEV_H */
