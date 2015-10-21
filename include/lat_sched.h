@@ -106,6 +106,7 @@ typedef int
                                lat_task_t            *task,
                                lat_core_t            **core);
 
+
 /*
  * Host-level scheduling.
  *
@@ -151,7 +152,7 @@ typedef int
 
 /**
  * Schedule a task using a given host-level scheduler. The scheduler will
- * identified the target core for the execution of the task; it will not
+ * identified the target device for the execution of the task; it will not
  * actually schedule the task for execution on the core, the caller is in
  * charge of actually assigning the task to the core.
  *
@@ -166,21 +167,42 @@ typedef int
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 typedef int
-(*lat_host_sched_task_fn_t) (lat_host_sched_t    *host_sched,
-                             lat_task_t          *task,
-                             lat_device_t        **dev);
+(*lat_host_sched_task_fn_t) (lat_host_sched_t   *host_sched,
+                             lat_task_t         *task,
+                             lat_device_t       **dev);
 
 /**
- * Copy a file from one host to another. This is a blocking function, the
+ * Schedule a file using a given host-level scheduler. This is for instance
+ * used to place files on various AFEs during initialization of an experiment
+ * or simulation. The file will not be actually copied to the device, the
+ * caller is in charge of actually copying the file.
+ *
+ * @param[in]   host_sched  Structure representing the host-level scheduler to
+ *                          use for scheduling the task.
+ * @param[in]   file        Structure representing the file to be scheduler.
+ * @param[out]  dev         Device selected by the scheduler. If no device has 
+ *                          been selected, device is set to NULL.
+ * @return  LAT_SUCCESS     The file was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          file.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+typedef int
+(*lat_host_sched_file_fn_t) (lat_host_sched_t   *host_sched,
+                             lat_file_t         *file,
+                             lat_device_t       **dev);
+
+/**
+ * Copy a file from one device to another. This is a blocking function, the
  * file is guaranteed to be copied upon completion of the function.
  *
  * @param[in]   file        File to be copied.
- * @param[in]   src_host    Location (host) of the file to copy.
- * @param[in]   dest_host   Destination (host) for the file to be copied.
+ * @param[in]   src_device  Location (device) of the file to copy.
+ * @param[in]   dest_device Destination (device) for the file to be copied.
  * @return  LAT_SUCCESS     The file was successfully copied.
  * @return  LAT_ERROR       A fatal error occured during the copy.
  *                          We guarantee that no partial copy of the file is
- *                          left on the remote host.
+ *                          left on the remote device.
  * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
  */
 /*
@@ -191,9 +213,9 @@ typedef int
  * file location and task scheduling to orchestrate file copies.
  */
 typedef int
-(*lat_host_copy_file_fn_t) (lat_file_t   *file,
-                            lat_host_t   *src_host,
-                            lat_host_t   *dest_host);
+(*lat_host_copy_file_fn_t) (lat_file_t      *file,
+                            lat_device_t    *src_device,
+                            lat_device_t    *dest_device);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -201,8 +223,8 @@ typedef int
  * file is guarenteed to be deleted from the source.
  *
  * @param[in]   file        File to be moved.
- * @param[in]   src_host    Location (host) of the file to move.
- * @param[in]   dest_host   Destination (host) for the file to be moved.
+ * @param[in]   src_device  Location (device) of the file to move.
+ * @param[in]   dest_device Destination (device) for the file to be moved.
  * @return  LAT_SUCCESS     The file was successfully moved.
  * @return  LAT_ERROR       A fatal error occured during the transfer. The
  *                          source file is then guaranteed to still exist and
@@ -218,9 +240,9 @@ typedef int
  * file location and task scheduling to orchestrate file transfers.
  */
 typedef int
-(*lat_host_move_file_fn_t) (lat_file_t   *file,
-                            lat_host_t   *src_host,
-                            lat_host_t   *dest_host);
+(*lat_host_move_file_fn_t) (lat_file_t      *file,
+                            lat_device_t    *src_device,
+                            lat_device_t    *dest_device);
 
 /*
  * Meta-scheduler.
@@ -286,6 +308,78 @@ typedef int
                              lat_host_t          **host);
 
 /**
+ * Schedule a file using a given meta-scheduler. The scheduler will
+ * identified the target host for hosting the file; it will not actually copy
+ * the file, the caller is in charge of actually copying the file to the host.
+ *
+ * @param[in]   meta_sched  Structure representing the meta-scheduler to
+ *                          use for scheduling the task.
+ * @param[in]   task        Structure representing the task to be scheduler.
+ * @param[out]  host        Host selected by the scheduler. If no host has 
+ *                          been selected, host is set to NULL.
+ * @return  LAT_SUCCESS     The task was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          task.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+typedef int
+(*lat_meta_sched_file_fn_t) (lat_meta_sched_t   *meta_sched,
+                             lat_file_t         *file,
+                             lat_host_t         **host);
+
+/**
+ * Copy a file from one host to another. This is a blocking function, the
+ * file is guaranteed to be copied upon completion of the function.
+ *
+ * @param[in]   file        File to be copied.
+ * @param[in]   src_host    Location (host) of the file to copy.
+ * @param[in]   dest_host   Destination (host) for the file to be copied.
+ * @return  LAT_SUCCESS     The file was successfully copied.
+ * @return  LAT_ERROR       A fatal error occured during the copy.
+ *                          We guarantee that no partial copy of the file is
+ *                          left on the remote host.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+/*
+ * XXX: does the scheduler really need to have this things? This library is
+ * fairly agnostic from the underlying implementation so i would assume that
+ * the caller code will be in charge of copying the files is required. But then
+ * the question is really about how the caller can gather enough info about
+ * file location and task scheduling to orchestrate file copies.
+ */
+typedef int
+(*lat_meta_sched_copy_file_fn_t) (lat_file_t   *file,
+                                  lat_host_t   *src_host,
+                                  lat_host_t   *dest_host);
+
+/**
+ * Copy a file from one host to another. This is a blocking function, the
+ * file is guaranteed to be moved upon completion of the function, i.e., the
+ * file is guarenteed to be deleted from the source.
+ *
+ * @param[in]   file        File to be moved.
+ * @param[in]   src_host    Location (host) of the file to move.
+ * @param[in]   dest_host   Destination (host) for the file to be moved.
+ * @return  LAT_SUCCESS     The file was successfully moved.
+ * @return  LAT_ERROR       A fatal error occured during the transfer. The
+ *                          source file is then guaranteed to still exist and
+ *                          we guarantee that no partial copy remain on the
+ *                          destination host.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+/*
+ * XXX: does the scheduler really need to have this things? This library is
+ * fairly agnostic from the underlying implementation so i would assume that
+ * the caller code will be in charge of moving the files is required. But then
+ * the question is really about how the caller can gather enough info about
+ * file location and task scheduling to orchestrate file transfers.
+ */
+typedef int
+(*lat_meta_sched_move_file_fn_t) (lat_file_t   *file,
+                                  lat_host_t   *src_host,
+                                  lat_host_t   *dest_host);
+
+/**
  * Schedule a workflow using a offline, static policy. For that, a file
  * representing the workflow is passed in and the resulting workflow (with
  * some task placement) is saved to a file for which a pointer is returned.
@@ -318,11 +412,13 @@ struct lat_module_t {
     lat_host_sched_init_fn_t        lat_module_host_sched_init;
     lat_host_sched_finalize_fn_t    lat_module_host_sched_finalize;
     lat_host_sched_task_fn_t        lat_module_host_sched_task;
+    lat_host_sched_file_fn_t        lat_module_host_sched_file;
     lat_host_copy_file_fn_t         lat_module_host_copy_file;
     lat_host_move_file_fn_t         lat_module_host_move_file;
     lat_meta_sched_init_fn_t        lat_module_meta_sched_init;
     lat_meta_sched_finalize_fn_t    lat_module_meta_sched_finalize;
     lat_meta_sched_task_fn_t        lat_module_meta_sched_task;
+    lat_meta_sched_file_fn_t        lat_module_meta_sched_file;
     lat_meta_sched_workflow_fn_t    lat_module_meta_sched_workflow;
     lat_module_finalize_fn_t        lat_module_finalize;
     /* Module's data */
