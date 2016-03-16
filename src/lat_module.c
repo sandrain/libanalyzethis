@@ -57,11 +57,13 @@ lat_init_module ()
     lat_module.lat_module_host_sched_init           = lat_host_sched_init_rr;
     lat_module.lat_module_host_sched_finalize       = lat_host_sched_fini_rr;
     lat_module.lat_module_host_sched_task           = lat_host_sched_task_rr;
+    lat_module.lat_module_host_sched_file           = NULL;
     lat_module.lat_module_host_copy_file            = NULL;
     lat_module.lat_module_host_move_file            = NULL;
     lat_module.lat_module_meta_sched_init           = lat_meta_sched_init_rr;
     lat_module.lat_module_meta_sched_finalize       = lat_meta_sched_fini_rr;
     lat_module.lat_module_meta_sched_task           = lat_meta_sched_task_rr;
+    lat_module.lat_module_meta_sched_file           = NULL;
     lat_module.lat_module_meta_sched_workflow
         = lat_workflow_static_placement_noop,
     lat_module.verbose                              = false;

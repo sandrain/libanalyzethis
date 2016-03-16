@@ -151,7 +151,7 @@ typedef int
 
 /**
  * Schedule a task using a given host-level scheduler. The scheduler will
- * identified the target core for the execution of the task; it will not
+ * identify the target core for the execution of the task; it will not
  * actually schedule the task for execution on the core, the caller is in
  * charge of actually assigning the task to the core.
  *
@@ -169,6 +169,27 @@ typedef int
 (*lat_host_sched_task_fn_t) (lat_host_sched_t    *host_sched,
                              lat_task_t          *task,
                              lat_device_t        **dev);
+
+/**
+ * Schedule (place) a file using a given host-level scheduler. The scheduler
+ * will identify the target AFE where the file should be stored; it will not
+ * actually copy the file on the AFE, the caller is in charge of actually
+ * copying the file to the AFE.
+ *
+ * @param[in]   host_sched  Structure representing the host-level scheduler to
+ *                          use for scheduling the task.
+ * @param[in]   file        File to be scheduled.
+ * @param[out]  dev         Device selected by the scheduler. If no device has 
+ *                          been selected, device is set to NULL.
+ * @return  LAT_SUCCESS     The file was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          file.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+typedef int
+(*lat_host_sched_file_fn_t) (lat_host_sched_t	*host_sched,
+			     lat_file_t		*file,
+			     lat_device_t	**dev);
 
 /**
  * Copy a file from one host to another. This is a blocking function, the
@@ -266,7 +287,7 @@ typedef int
 
 /**
  * Schedule a task using a given meta-scheduler. The scheduler will
- * identified the target host for the execution of the task; it will not
+ * identify the target host for the execution of the task; it will not
  * actually schedule the task for execution on the host, the caller is in
  * charge of actually assigning the task to the host.
  *
@@ -284,6 +305,27 @@ typedef int
 (*lat_meta_sched_task_fn_t) (lat_meta_sched_t    *meta_sched,
                              lat_task_t          *task,
                              lat_host_t          **host);
+
+/**
+ * Schedule (place) a file using a given neta-scheduler. The scheduler
+ * will identify the target host for the placement of the file; it will
+ * not actually copy the file to the host, the caller is in charge of
+ * actually copying the file to the host.
+ *
+ * @param[in]   meta_sched  Structure representing the meta-scheduler to
+ *                          use for scheduling the file.
+ * @param[in]	file	    File to be scheduled.
+ * @param[out]  host        Host selected by the scheduler. If no host has 
+ *                          been selected, host is set to NULL.
+ * @return  LAT_SUCCESS     The file was successfully scheduled.
+ * @return  LAT_ERROR       A fatal error occured during the scheduling of the
+ *                          file.
+ * @return  LAT_BAD_PARAM   One or more of the parameters is invalid.
+ */
+typedef int
+(*lat_meta_sched_file_fn_t) (lat_meta_sched_t	*meta_sched,
+			     lat_file_t		*file,
+			     lat_host_t		**host);
 
 /**
  * Schedule a workflow using a offline, static policy. For that, a file
@@ -318,11 +360,13 @@ struct lat_module_t {
     lat_host_sched_init_fn_t        lat_module_host_sched_init;
     lat_host_sched_finalize_fn_t    lat_module_host_sched_finalize;
     lat_host_sched_task_fn_t        lat_module_host_sched_task;
+    lat_host_sched_file_fn_t	    lat_module_host_sched_file;
     lat_host_copy_file_fn_t         lat_module_host_copy_file;
     lat_host_move_file_fn_t         lat_module_host_move_file;
     lat_meta_sched_init_fn_t        lat_module_meta_sched_init;
     lat_meta_sched_finalize_fn_t    lat_module_meta_sched_finalize;
     lat_meta_sched_task_fn_t        lat_module_meta_sched_task;
+    lat_meta_sched_file_fn_t	    lat_module_meta_sched_file;
     lat_meta_sched_workflow_fn_t    lat_module_meta_sched_workflow;
     lat_module_finalize_fn_t        lat_module_finalize;
     /* Module's data */

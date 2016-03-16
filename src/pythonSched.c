@@ -23,6 +23,8 @@ lat_device_t        *lat_device         = NULL;
 lat_device_sched_t  *lat_device_sched   = NULL;
 lat_host_t          *lat_host           = NULL;
 lat_host_sched_t    *lat_host_sched     = NULL;
+lat_cluster_t       *lat_cluster        = NULL;
+lat_meta_sched_t    *lat_meta_sched     = NULL;
 
 /*
  * Public APIs accessible from Python code
@@ -135,8 +137,10 @@ py_device_sched_task (PyObject *self, PyObject *args)
     rc = lat_module.lat_module_device_sched_task (lat_device_sched,
                                                   task,
                                                   &core);
-    if (rc != LAT_SUCCESS)
+    if (rc != LAT_SUCCESS) {
         LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
+        goto exit_fn;
+    }
 
     /* XXX some uglyness for now: we go back to python, we break the idea of
            having an opaque handle, explicitly cast the value and return it */
@@ -196,8 +200,35 @@ py_host_sched_task (PyObject *self, PyObject *args)
     rc = lat_module.lat_module_host_sched_task (lat_host_sched,
                                                 task,
                                                 &afe);
-    if (rc != LAT_SUCCESS)
+    if (rc != LAT_SUCCESS) {
         LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
+        goto exit_fn;
+    }
+
+    afe_id = (int)afe->dev_id;
+
+ exit_fn:
+    return Py_BuildValue ("i", afe_id);
+}
+
+static PyObject*
+py_host_sched_file (PyObject *self, PyObject *args)
+{
+    int             rc      = LAT_SUCCESS;
+    lat_device_t    *afe    = NULL;
+    int             afe_id  = -1;
+    lat_file_t      *file   = NULL;
+
+    if (lat_module.lat_module_host_sched_file == NULL)
+        goto exit_fn;
+
+    rc = lat_module.lat_module_host_sched_file (lat_host_sched,
+                                                file,
+                                                &afe);
+    if (rc != LAT_SUCCESS) {
+        LAT_ERR_MSG (("lat_module_device_sched_file() failed"));
+        goto exit_fn;
+    }
 
     afe_id = (int)afe->dev_id;
 
@@ -226,6 +257,25 @@ py_meta_sched_init (PyObject *self, PyObject *args)
 {
     int rc = LAT_SUCCESS;
 
+    if (lat_module.lat_module_meta_sched_init == NULL) {
+        rc = LAT_ERROR;
+        goto exit_fn;
+    }
+
+    rc = lat_module.lat_module_meta_sched_init (lat_cluster,
+                                                &lat_meta_sched);
+    if (rc != LAT_SUCCESS) {
+        LAT_ERR_MSG (("lat_module_meta_sched_init() failed"));
+        goto exit_fn;
+    }
+
+    if (lat_meta_sched == NULL) {
+        LAT_ERR_MSG (("Invalid meta scheduler object"));
+        rc = LAT_ERROR;
+        goto exit_fn;
+    }
+
+ exit_fn:
     return Py_BuildValue ("i", rc);
 }
 
@@ -241,7 +291,47 @@ static PyObject*
 py_meta_sched_task (PyObject *self, PyObject *args)
 {
     int rc = LAT_SUCCESS;
+    lat_host_t  *host;
+    int         host_id = -1;
+    lat_task_t  *task;
 
+    if (lat_module.lat_module_meta_sched_task == NULL)
+        goto exit_fn;
+
+    rc = lat_module.lat_module_meta_sched_task (lat_meta_sched,
+                                                task,
+                                                &host);
+    if (rc != LAT_SUCCESS) {
+        LAT_ERR_MSG (("lat_module_meta_sched_task() failed"));
+        goto exit_fn;
+    }
+
+ exit_fn:
+    return Py_BuildValue ("i", rc);
+}
+
+static PyObject*
+py_meta_sched_file (PyObject *self, PyObject *args)
+{
+    int         rc      = LAT_SUCCESS;
+    lat_host_t  *host   = NULL;
+    int         host_id = -1;
+    lat_file_t  *file   = NULL;
+
+    if (lat_module.lat_module_meta_sched_file == NULL)
+        goto exit_fn;
+
+    rc = lat_module.lat_module_meta_sched_file (lat_meta_sched,
+                                                file,
+                                                &host);
+    if (rc != LAT_SUCCESS) {
+        LAT_ERR_MSG (("lat_module_meta_sched_file() failed"));
+        goto exit_fn;
+    }
+
+    host_id = (int)host->host_id;
+
+ exit_fn:
     return Py_BuildValue ("i", rc);
 }
 
@@ -309,11 +399,13 @@ static PyMethodDef pythonSched_methods[] = {
     {"lat_host_sched_init", py_host_sched_init, METH_VARARGS},
     {"lat_host_sched_finalize", py_host_sched_finalize, METH_VARARGS},
     {"lat_host_sched_task", py_host_sched_task, METH_VARARGS},
+    {"lat_host_sched_file", py_host_sched_file, METH_VARARGS},
     {"lat_host_copy_file", py_host_copy_file, METH_VARARGS},
     {"lat_host_move_file", py_host_move_file, METH_VARARGS},
     {"lat_meta_sched_init", py_meta_sched_init, METH_VARARGS},
     {"lat_meta_sched_finalize", py_meta_sched_finalize, METH_VARARGS},
     {"lat_meta_sched_task", py_meta_sched_task, METH_VARARGS},
+    {"lat_meta_sched_file", py_meta_sched_file, METH_VARARGS},
     {"lat_meta_sched_workflow", py_meta_sched_workflow, METH_VARARGS},
 };
 

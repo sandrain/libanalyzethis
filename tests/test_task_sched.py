@@ -27,6 +27,12 @@ if (rc != 0):
     print "ERROR: lat_device_sched_init() failed (ret: %d)\n" % rc
 print "Success.\n";
 
+print "Initializing the meta scheduler..."
+rc = py_lat_module.lat_meta_sched_init ();
+if (rc != 0):
+    print "ERROR: lat_meta_sched_init() failed (ret: %d)\n" % rc
+print "Success.\n"
+
 print "Simulating the scheduling of a task on a specific device..."
 core_id = py_lat_module.lat_device_sched_task ()
 print "Assigned core ID: %d" % core_id
