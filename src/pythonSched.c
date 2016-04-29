@@ -237,6 +237,29 @@ py_host_sched_file (PyObject *self, PyObject *args)
 }
 
 static PyObject*
+py_host_sched_file (PyObject *self, PyObject *args)
+{
+    int             rc      = LAT_SUCCESS;
+    lat_device_t    *afe    = NULL;
+    int             afe_id  = -1;
+    lat_file_t      *file   = NULL;
+
+    if (lat_module.lat_module_host_sched_file == NULL)
+        goto exit_fn;
+
+    rc = lat_module.lat_module_host_sched_file (lat_host_sched,
+                                                file,
+                                                &afe);
+    if (rc != LAT_SUCCESS)
+        LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
+
+    afe_id = (int)afe->dev_id;
+
+ exit_fn:
+    return Py_BuildValue ("i", afe_id);
+}
+
+static PyObject*
 py_host_copy_file (PyObject *self, PyObject *args)
 {
     int rc = LAT_SUCCESS;
@@ -332,6 +355,14 @@ py_meta_sched_file (PyObject *self, PyObject *args)
     host_id = (int)host->host_id;
 
  exit_fn:
+    return Py_BuildValue ("i", rc);
+}
+
+static PyObject*
+py_meta_sched_file (PyObject *self, PyObject *args)
+{
+    int rc = LAT_SUCCESS;
+
     return Py_BuildValue ("i", rc);
 }
 
