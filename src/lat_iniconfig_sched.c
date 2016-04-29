@@ -64,30 +64,40 @@ lat_iniconfig_to_syscfg (lat_iniconfig_t *cfg, lat_cluster_t **syscfg)
     lat_ini_block_t *block;
     lat_host_t      *server_cfg;
     lat_device_t    *afe_cfg;
+    char            *block_name;
+    char            *key_name;
 
     s = *syscfg;
     if (s != NULL)
         LAT_FATAL (LAT_ERROR, ("System configuration is already set"));
+
     ALLOC_CLUSTER_T(s);
     if (s == NULL)
         LAT_FATAL (LAT_ERROR, ("ALLOC_CLUSTER_T() failed"));
 
-    rc = iniconfig_find_block ("SERVERS", cfg, &block);
+    block_name  = "SERVERS";
+    key_name    = "number_hosts";
+    rc = iniconfig_find_block (block_name, cfg, &block);
     if (rc != LAT_SUCCESS)
         LAT_FATAL (LAT_ERROR, ("iniconfig_find_block() failed"));
 
-    rc = iniconfig_find_kv ("number_hosts", block, &val_str);
+    rc = iniconfig_find_kv (key_name, block, &val_str);
     if (rc != LAT_SUCCESS)
-        LAT_FATAL (LAT_ERROR, ("iniconfig_find_kv() failed"));
+        LAT_FATAL (LAT_ERROR,
+                   ("iniconfig_find_kv() failed (block: %s, key: %s)",
+                    block_name, key_name));
     s->num_servers = (ssize_t)atoi (val_str);
 
     ALLOC_HOST_T (server_cfg);
     if (server_cfg == NULL)
         LAT_FATAL (LAT_ERROR, ("ALLOC_HOST_T() failed"));
 
-    rc = iniconfig_find_kv ("number_afes", block, &val_str);
+    key_name = "number_afes";
+    rc = iniconfig_find_kv (key_name, block, &val_str);
     if (rc != LAT_SUCCESS)
-        LAT_FATAL (LAT_ERROR, ("iniconfig_find_kv() failed"));
+        LAT_FATAL (LAT_ERROR,
+                   ("iniconfig_find_kv() failed (block: %s, key: %s)",
+                    block_name, key_name));
     server_cfg->num_afes = (ssize_t)atoi (val_str);
     s->server_cfg = server_cfg;
 
@@ -96,13 +106,19 @@ lat_iniconfig_to_syscfg (lat_iniconfig_t *cfg, lat_cluster_t **syscfg)
         LAT_FATAL (LAT_ERROR, ("ALLOC_DEVICE_T() failed"));
     server_cfg->afes_cfg = afe_cfg;
 
+    block_name = "AFE";
     rc = iniconfig_find_block ("AFE", cfg, &block);
     if (rc != LAT_SUCCESS)
-        LAT_FATAL (LAT_ERROR, ("iniconfig_find_block() failed"));
+        LAT_FATAL (LAT_ERROR,
+                   ("iniconfig_find_block() failed (block:%s)",
+                    block));
 
-    rc = iniconfig_find_kv ("cores_per_afe", block, &val_str);
+    key_name = "cores_per_afe";
+    rc = iniconfig_find_kv (key_name, block, &val_str);
     if (rc != LAT_SUCCESS)
-        LAT_FATAL (LAT_ERROR, ("iniconfig_find_kv() failed"));
+        LAT_FATAL (LAT_ERROR,
+                   ("iniconfig_find_kv() failed (block: %s, key: %s)",
+                    block_name, key_name));
     afe_cfg->num_cores = (ssize_t)atoi (val_str);
 
     *syscfg = s;

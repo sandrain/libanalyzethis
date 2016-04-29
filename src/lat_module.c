@@ -57,7 +57,7 @@ lat_init_module ()
     lat_module.lat_module_host_sched_init           = lat_host_sched_init_rr;
     lat_module.lat_module_host_sched_finalize       = lat_host_sched_fini;
     lat_module.lat_module_host_sched_task           = lat_host_sched_task_rr;
-    lat_module.lat_module_host_sched_file           = NULL;
+    lat_module.lat_module_host_sched_file           = lat_host_sched_file_rr;
     lat_module.lat_module_host_copy_file            = NULL;
     lat_module.lat_module_host_move_file            = NULL;
     lat_module.lat_module_meta_sched_init           = lat_meta_sched_init_rr;
