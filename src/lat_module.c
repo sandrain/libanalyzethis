@@ -21,8 +21,9 @@
 /*
    Enable the implicit selection of a scheduling policy:
     0: none, must be defined manually
-    1: RR,
-    2, WA
+    1: RR
+    2: WA
+    3: random
 */
 
 #define SCHED_PREDEF_POLICY (1)
@@ -92,6 +93,22 @@ lat_init_module ()
     lat_module.lat_module_meta_sched_init           = lat_meta_sched_init_rr; /* Not ready yet so using RR */
     lat_module.lat_module_meta_sched_finalize       = lat_meta_sched_fini; /* Not ready yet so using RR */
     lat_module.lat_module_meta_sched_task           = lat_meta_sched_task_rr; /* Not ready yet so using RR */
+    lat_module.lat_module_meta_sched_file           = NULL;
+    lat_module.lat_module_meta_sched_workflow
+        = lat_workflow_static_placement_noop,
+#elif (SCHED_PREDEF_POLICY == 3) /* random */
+    lat_module.lat_module_device_sched_init         = lat_device_sched_init_random;
+    lat_module.lat_module_device_sched_finalize     = lat_device_sched_fini_random;
+    lat_module.lat_module_device_sched_task         = lat_device_sched_task_random;
+    lat_module.lat_module_host_sched_init           = lat_host_sched_init_random;
+    lat_module.lat_module_host_sched_finalize       = lat_host_sched_fini;
+    lat_module.lat_module_host_sched_task           = lat_host_sched_task_random;
+    lat_module.lat_module_host_sched_file           = lat_host_sched_file_random; /* WA is not applicable so using RR */
+    lat_module.lat_module_host_copy_file            = NULL;
+    lat_module.lat_module_host_move_file            = NULL;
+    lat_module.lat_module_meta_sched_init           = lat_meta_sched_init_random; /* Not ready yet so using RR */
+    lat_module.lat_module_meta_sched_finalize       = lat_meta_sched_fini; /* Not ready yet so using RR */
+    lat_module.lat_module_meta_sched_task           = lat_meta_sched_task_random; /* Not ready yet so using RR */
     lat_module.lat_module_meta_sched_file           = NULL;
     lat_module.lat_module_meta_sched_workflow
         = lat_workflow_static_placement_noop,

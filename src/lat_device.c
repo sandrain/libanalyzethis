@@ -24,18 +24,19 @@
 #include "lat_debug.h"
 #include "lat_sched.h"
 
-typedef struct lat_device_rr_sched {
+typedef struct lat_device_rr_sched_s {
     ssize_t     num_cores;
     lat_core_t  last_core;
 } lat_device_rr_sched;
 
 lat_device_rr_sched rr_dev_sched;
 
-typedef struct lat_device_random_sched_t {
+typedef struct lat_device_random_sched_s {
     ssize_t num_cores;
 } lat_device_random_sched_t;
 
 lat_device_random_sched_t random_dev_sched;
+
 
 int
 lat_device_sched_init_rr (lat_device_t          *dev,
@@ -91,6 +92,12 @@ lat_device_sched_init_random (lat_device_t          *dev,
 
     *dev_sched = (void*)&random_dev_sched;
 
+    return LAT_SUCCESS;
+}
+
+int
+lat_device_sched_fini_random (lat_device_sched_t **dev_sched)
+{
     return LAT_SUCCESS;
 }
 

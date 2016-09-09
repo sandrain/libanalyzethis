@@ -464,6 +464,26 @@ lat_meta_sched_task_rr (lat_meta_sched_t    *meta_sched,
     return LAT_SUCCESS;
 }
 
+int lat_meta_sched_task_random (lat_meta_sched_t    *meta_sched,
+                                lat_task_t          *task,
+                                lat_host_t          **host)
+{
+    lat_host_t              *my_host = NULL;
+    lat_meta_random_sched_t *random_meta_sched;
+
+    if (meta_sched == NULL)
+        LAT_FATAL (LAT_BAD_PARAM, ("Invalid meta scheduler"));
+
+    random_meta_sched = (lat_meta_random_sched_t*)meta_sched;
+    
+    ALLOC_HOST_T(my_host);
+    my_host->host_id = rand() % random_meta_sched->num_servers;
+
+    *host = my_host;
+
+    return LAT_SUCCESS;
+}
+
 int
 lat_meta_sched_file_rr (lat_meta_sched_t    *meta_sched,
                         lat_file_t          *file,
