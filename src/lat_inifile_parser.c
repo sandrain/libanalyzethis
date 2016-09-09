@@ -112,6 +112,8 @@ lat_parse_inifile (char *inifile, lat_iniconfig_t **config)
             int             j;
             lat_ini_kv_t    *new_keyval;
 
+            /* XXX: the code does not work if spaces or tabs are present before the key */
+
             /* If we end up here, we have a key/value pair */
             equal_pos = pos;
             while (line[equal_pos] != '=' && equal_pos < strlen (line)) {
