@@ -54,9 +54,39 @@ typedef struct lat_meta_random_sched_t {
     file_sched_data_t   file_sched_data;
 } lat_meta_random_sched_t;
 
+typedef struct lat_host_wa_sched_t {
+    ssize_t num_afes;
+} lat_host_wa_sched_t;
+
 /*
  * Scheduling across multiple AFE on a single node.
  */
+
+int
+lat_host_sched_init_wa (lat_host_t          *host,
+                        lat_host_sched_t    **host_sched)
+{
+    lat_host_wa_sched_t *wa_host_sched;
+
+    if (host == NULL)
+    {
+        *host_sched = NULL;
+        return LAT_BAD_PARAM;
+    }
+
+    wa_host_sched = malloc (sizeof (lat_host_wa_sched_t));
+    if (wa_host_sched == NULL)
+    {
+        *host_sched = NULL;
+        LAT_FATAL (LAT_ERROR, ("malloc() failed"));
+    }
+
+    wa_host_sched->num_afes = host->num_afes;
+
+    *host_sched = (void*)wa_host_sched;
+
+    return LAT_SUCCESS;
+}
 
 int
 lat_host_sched_init_rr (lat_host_t          *host,
@@ -77,7 +107,10 @@ lat_host_sched_init_rr (lat_host_t          *host,
 
     /* This will assign the first task to the first afe */
     rr_host_sched->task_sched_data.last_assigned = host->num_afes - 1;
+    /* GV: THIS IS TO MAKE SURE THAT WE HAVE THE SAME PLACEMENT THAN THE EMULATOR */
+    //rr_host_sched->file_sched_data.last_assigned = host->num_afes;
     rr_host_sched->file_sched_data.last_assigned = host->num_afes - 1;
+    rr_host_sched->file_sched_data.last_assigned = host->num_afes;
     rr_host_sched->num_afes  = host->num_afes;
 
     *host_sched = (void*)rr_host_sched;
@@ -124,6 +157,83 @@ lat_host_sched_fini (lat_host_sched_t **host_sched)
 }
 
 int
+lat_host_sched_task_wa (lat_host_sched_t    *host_sched,
+                        lat_task_t          *task,
+                        lat_device_t        **dev)
+{
+    lat_device_t        *my_dev             = NULL;
+    lat_host_wa_sched_t *wa_host_sched;
+    float               _wa;
+    float               min_wa              = -1;
+    int                 select_afe          = 0;
+    long                size_input_files    = 0;
+    long                size_data_to_move   = 0;
+    int                 i;
+
+    if (host_sched == NULL)
+    {
+        *dev = NULL;
+        LAT_FATAL (LAT_BAD_PARAM, ("Invalid host scheduler"));
+    }
+
+    wa_host_sched = (lat_host_wa_sched_t*)host_sched;
+
+    /* Get the size of all input files */
+    size_input_files = 0;
+    for (i = 0; i < task->num_input_files; i++)
+    {
+        /* If size is negative, it simply means that the file is not ready,
+           we can still use the size and ignore the negative sign. */
+        if (task->input_files[i].size > 0) {
+            size_input_files += task->input_files[i].size;
+        } else {
+            size_input_files += -task->input_files[i].size;
+        }
+    }
+
+    /* We get the AFE with the lowest WA ratio */
+    for (i = 0; i < wa_host_sched->num_afes; i++)
+    {
+        int j;
+
+        size_data_to_move = 0;
+        for (j = 0; j < task->num_input_files; j++)
+        {
+            /* If the location is negative, it simply means the file is not yet available */
+            if (task->input_files[j].location != i && task->input_files[j].location != -i)
+            {
+                if (task->input_files[j].size > 0)
+                {
+                    size_data_to_move += task->input_files[j].size;
+                } else {
+                    size_data_to_move += -task->input_files[j].size;
+                }
+            }
+        }
+/*
+        printf ("Amount of data to move to AFE %d: %ld\n", i, size_data_to_move);
+*/
+
+        _wa = (size_input_files + size_data_to_move) / size_input_files;
+        if (min_wa == -1 || _wa < min_wa) {
+            min_wa = _wa;
+            select_afe = i;
+        }
+    }
+
+    /* Create a new device structure to return the required info */
+    ALLOC_DEVICE_T(my_dev);
+/*
+    printf ("Scheduling task on AFE %d\n", select_afe);
+*/
+    my_dev->dev_id = select_afe;
+
+    *dev = my_dev;
+
+    return LAT_SUCCESS;
+}
+
+int
 lat_host_sched_task_rr (lat_host_sched_t    *host_sched,
                         lat_task_t          *task,
                         lat_device_t        **dev)
@@ -149,7 +259,7 @@ lat_host_sched_task_rr (lat_host_sched_t    *host_sched,
     /* Create a new device structure to return the required info */
     ALLOC_DEVICE_T(my_dev);
     my_dev->dev_id = rr_host_sched->task_sched_data.last_assigned;
-    
+
     *dev = my_dev;
 
     return LAT_SUCCESS;
@@ -177,6 +287,29 @@ lat_host_sched_task_random (lat_host_sched_t    *host_sched,
 
     return LAT_SUCCESS;
 }
+
+/*
+int
+lat_host_sched_file_wa (lat_host_sched_t    *host_sched,
+                        lat_file_t          *file,
+                        lat_device_t        **dev)
+{
+    lat_device_t        *my_dev = NULL;
+    lat_host_wa_sched_t *wa_host_sched;
+
+    if (host_sched == NULL)
+    {
+        *dev = NULL;
+        LAT_FATAL (LAT_BAD_PARAM, ("Invalid host scheduler"));
+    }
+
+    wa_host_sched = (lat_host_wa_sched_t*)host_sched;
+
+    *dev = my_dev;
+
+    return LAT_SUCCESS;
+}
+*/
 
 int
 lat_host_sched_file_rr (lat_host_sched_t    *host_sched,

@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define LAT_DEBUG 1
+#define LAT_DEBUG 0
 
 char *lat_varg_to_str (const char *fmt, ...);
 
@@ -34,11 +34,11 @@ char *lat_varg_to_str (const char *fmt, ...);
     }                                                                                   \
 } while (0)
 #else
-#define LAT_ERR_MSG (a) do {} while(0)
+#define LAT_ERR_MSG(a) do {} while(0)
 #endif /* LAT_ERR_MSG */
 
 #define LAT_FATAL(rc,a) do {    \
-    LAT_ERR_MSG (a);            \
+    LAT_ERR_MSG(a);            \
     return rc;                  \
 } while(0)                      
 
@@ -56,7 +56,7 @@ char *lat_varg_to_str (const char *fmt, ...);
     }                                                               \
 } while (0)
 #else
-#define LAT_INFO (a) do {} while(0)
+#define LAT_INFO(a) do {} while(0)
 #endif /* LAT_INFO */
 
 #if LAT_DEBUG == 1
@@ -73,7 +73,7 @@ char *lat_varg_to_str (const char *fmt, ...);
     }                                                               \
 } while (0)
 #else
-#define LAT_WARNL (a) do {} while(0)
+#define LAT_WARN(a) do {} while(0)
 #endif /* LAT_WARN */
 
 #endif /* __LAT_DEBUG_H */
