@@ -12,6 +12,7 @@
  *
  */
 
+#define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <stdbool.h>
 #include <Python.h>
 
@@ -185,16 +186,48 @@ py_host_sched_finalize (PyObject *self, PyObject *args)
 static PyObject*
 py_host_sched_task (PyObject *self, PyObject *args)
 {
-    int             rc      = LAT_SUCCESS;
-    lat_device_t    *afe    = NULL;
-    int             afe_id  = -1;
-    lat_task_t      *task   = NULL;
+    int             rc              = LAT_SUCCESS;
+    lat_device_t    *afe            = NULL;
+    int             afe_id          = -1;
+    lat_task_t      task;
+    char            *task_name;
+    char            *file_map;
+    char            *array[1024];
+    int             i               = 0;
+    int             j               = 0;
+    int             count           = 0;
 
     if (lat_module.lat_module_host_sched_task == NULL)
         goto exit_fn;
 
+    PyArg_ParseTuple (args, "ss", &task_name, &file_map);
+/*
+    printf ("-> Scheduling task %s\n", task_name);
+    printf ("-> Task's file input map: %s\n", file_map);
+*/
+
+    array[i] = strtok (file_map, ":");
+    while (array[i] != NULL)
+    {
+        array[++i] = strtok (NULL, ":");
+    }
+
+    task.name = task_name;
+    for (j = 0; j < i; j = j + 3)
+    {
+        task.input_files[count].name        = array[j];
+        task.input_files[count].size        = atoi (array[j+1]);
+        task.input_files[count].location    = atoi (array[j+2]);
+/*
+        printf ("-> File %s is on AFE %d (size: %d)\n", task.input_files[count].name, task.input_files[count].location, task.input_files[count].size);
+*/
+
+        count++;
+    }
+    task.num_input_files = count;
+
     rc = lat_module.lat_module_host_sched_task (lat_host_sched,
-                                                task,
+                                                &task,
                                                 &afe);
     if (rc != LAT_SUCCESS)
         LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
