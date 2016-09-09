@@ -122,7 +122,7 @@ lat_device_sched_task_random (lat_device_sched_t    *dev_sched,
 
     core_id = (lat_core_t)(rand() % random_dev_sched->num_cores);
 
-    *core = core_id;
+    *core = &core_id;
 
     return LAT_SUCCESS;
 }
