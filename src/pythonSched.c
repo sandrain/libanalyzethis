@@ -233,10 +233,8 @@ py_host_sched_task (PyObject *self, PyObject *args)
     rc = lat_module.lat_module_host_sched_task (lat_host_sched,
                                                 &task,
                                                 &afe);
-    if (rc != LAT_SUCCESS) {
+    if (rc != LAT_SUCCESS)
         LAT_ERR_MSG (("lat_module_device_sched_task() failed"));
-        goto exit_fn;
-    }
 
     afe_id = (int)afe->dev_id;
 

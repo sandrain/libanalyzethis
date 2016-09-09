@@ -25,7 +25,7 @@
     2, WA
 */
 
-#define SCHED_PREDEF_POLICY (2)
+#define SCHED_PREDEF_POLICY (1)
 
 /* NOTE TO DEVELOPERS: do *not* use the C99 way to initialize a data structure,
    it *will* create some problems with some version of python. For example, the
